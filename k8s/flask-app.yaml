@@ -6,9 +6,9 @@ spec:
   selector:
     app: flask-app
   ports:
-    - name: http
-      port: 80
-      targetPort: gunicorn
+  - name: http
+    port: 80
+    targetPort: gunicorn
   type: LoadBalancer
 
 ---
