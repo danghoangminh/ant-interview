@@ -13,17 +13,6 @@ env:
   DEPLOYMENT_MANIFEST_PATH: "k8s/flask-app.yaml"
 
 jobs:
-  tags:
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get tags
-        run: |
-          git fetch --tags
-          echo "TAGS=$(git tag -l)" >> "$GITHUB_ENV"
-
   build:
     permissions:
       contents: read
@@ -32,6 +21,12 @@ jobs:
     steps:
       # Checks out the repository this file is in
       - uses: actions/checkout@v3
+
+      # Get tags
+      - name: Get tags
+        run: |
+          git fetch --tags
+          echo "TAGS=$(git tag -l)" >> "$GITHUB_ENV"
 
       # Logs in with your Azure credentials
       - name: Azure login
