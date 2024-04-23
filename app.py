@@ -1,11 +1,25 @@
+import os
+import platform
+import psutil
 from flask import Flask
 from threading import Thread
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/v1')
 def hello_world():
     return "<h1><center>Hello World app! Version 1</center><h1>"
+
+@app.route('/')
+def display_os_information():
+    os_info = {
+        "os_name": os.name,
+        "platform": platform.system(),
+        "platform_release": platform.release(),
+        "cpu_usage": psutil.cpu_percent(interval=None),
+        "ram_usage": psutil.virtual_memory().percent,
+    }
+    return os_info
 
 @app.route('/health')
 def health_check():
