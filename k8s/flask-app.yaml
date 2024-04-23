@@ -7,7 +7,7 @@ spec:
   selector:
     app: flask-app
   ports:
-    - name: http
+    - protocol: TCP
       port: 80
       targetPort: gunicorn
   type: LoadBalancer
@@ -40,8 +40,13 @@ spec:
           ports:
             - name: gunicorn
               containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
           livenessProbe:
             initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 10
             exec:
               command:
                 - /bin/sh
@@ -49,6 +54,8 @@ spec:
                 - pidof -x gunicorn
           readinessProbe:
             initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 10
             httpGet:
               port: gunicorn
               path: /health
