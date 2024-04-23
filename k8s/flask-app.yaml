@@ -30,6 +30,7 @@ spec:
       containers:
         - name: flask-app
           image: anttest.azurecr.io/flask-app:latest
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: 100m
@@ -43,6 +44,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-secret
+          env:
+            - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+              value: "securestring-value"
           livenessProbe:
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -55,6 +59,7 @@ spec:
           readinessProbe:
             initialDelaySeconds: 10
             periodSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 10
             httpGet:
               port: gunicorn

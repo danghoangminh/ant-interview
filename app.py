@@ -5,6 +5,12 @@ import psycopg2
 from flask import request
 from flask import Flask
 from threading import Thread
+from azure.monitor.opentelemetry import configure_azure_monitor
+from opentelemetry.instrumentation.wsgi import OpenTelemetryMiddleware
+from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
+
+# Configure Azure monitor collection telemetry pipeline
+configure_azure_monitor()
 
 # Get the database name, username, and password from environment variables
 dbname = os.environ.get("POSTGRES_DB")
@@ -12,6 +18,8 @@ username = os.environ.get("POSTGRES_USER")
 password = os.environ.get("POSTGRES_PASSWORD")
 
 app = Flask(__name__)
+app.wsgi_app = OpenTelemetryMiddleware(app.wsgi_app)
+Psycopg2Instrumentor().instrument()
 
 @app.route('/v1')
 def hello_world():
